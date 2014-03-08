@@ -16,7 +16,7 @@ end
 
 [T,globalPos] = velocityMethod(shiftCell);
 
- [curvature, orientation, bias]=FSolveMethod(shiftCell,'PlotOn');
+ [curvature, orientation, bias]=curvemethod(shiftCell,'PlotOn');
 % [T,globalPos] = transformation(curvature, orientation,bias);
 
 simulationPlot(T,globalPos,'gCoordinates')
@@ -24,7 +24,7 @@ simulationPlot(T,globalPos,'gCoordinates')
 figure(3)
 end
 
-function shiftCell = wavelengthShift(randMatrix,avgShift)
+function [shiftCell] = wavelengthShift(randMatrix,avgShift)
 %Given the random shift matrix and the average shift, returns a cell matrix
 %with each element being a 3x1 array with the wavelength shifts for a,b,c.
 %%
@@ -40,7 +40,7 @@ for i=1:length(shiftCell)
 end
 end
 
-function [curvature, orientation, bias]=FSolveMethod(shiftCell,vargin)
+function [curvature, orientation, bias]=curvemethod(shiftCell,vargin)
 %Calls the nonLinSolve function for each wavelength shift. Requires the
 %input of the random shift cell array and the optional plotting of the
 %curvature. Returns the curvature, orientaion, and bias of each sensor.
@@ -248,7 +248,7 @@ function aShift(hObj,~,shiftMatrix)
 % when user moves the slider control
 val = get(hObj,'Value');
 shiftMatrix(1,1) = val;
-FSolveMethod(shiftMatrix);
+curvemethod(shiftMatrix);
 end
 
 function bShift(hObj,~,shiftMatrix)
@@ -256,7 +256,7 @@ function bShift(hObj,~,shiftMatrix)
 % when user moves the slider control
 val = get(hObj,'Value');
 shiftMatrix(2,1) = val;
-FSolveMethod(shiftMatrix);
+curvemethod(shiftMatrix);
 end
 
 function cShift(hObj,~,shiftMatrix)
@@ -264,7 +264,7 @@ function cShift(hObj,~,shiftMatrix)
 % when user moves the slider control
 val = get(hObj,'Value');
 shiftMatrix(3,1) = val;
-FSolveMethod(shiftMatrix);
+curvemethod(shiftMatrix);
 end
 
 function uiPlotCurve(shiftMatrix)
