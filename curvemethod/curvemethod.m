@@ -1,4 +1,4 @@
-function [T,globalPos]=curvemethod(shiftCell,vargin)
+function [transMatrix,globalPos]=curvemethod(shiftCell,vargin)
 %Calls the nonLinSolve function for each wavelength shift. Requires the
 %input of the random shift cell array and the optional plotting of the
 %curvature. Returns the curvature, orientaion, and bias of each sensor.
@@ -12,7 +12,7 @@ if strcmp(vargin,'PlotOn')
     curvaturePlot(curvature)
     %uiPlotCurve(shiftMatrix)
 end
-[T,globalPos] = transformation(curvature, orientation,bias);
+[transMatrix,globalPos] = transformation(curvature, orientation,bias);
 end
 
 function [curvature,orientation,bias] = nonLinSolve(sLam_a,sLam_b,sLam_c)
@@ -52,7 +52,7 @@ xlabel('FBG Cluster Number')
 
 end
 
-function [T,globalPos] = transformation(curvature,orientation,bias)
+function [transMatrix,globalPos] = transformation(curvature,orientation,bias)
 %Given the curvature, orientation, bias of the sensors, plots the shape of
 %the sensor along with the rotated coordinate for each sensor.
 %%
@@ -60,7 +60,7 @@ function [T,globalPos] = transformation(curvature,orientation,bias)
 numSensors = length(curvature);
 
 %Creates the empty transformation cell array
-T = cell(numSensors,1);
+transMatrix = cell(numSensors,1);
 
 %Loops through the number of sensors and will create their relative
 %transformation matrix. Then will apply the global transformation.
@@ -71,7 +71,7 @@ for i=1:numSensors
     th = k*1;   %theta = k*ds, where ds is the length between sensors
 
     %Builds the transformation matrix
-    T{i} = [cos(phi) -sin(phi) 0 0;
+    transMatrix{i} = [cos(phi) -sin(phi) 0 0;
         sin(phi) cos(phi) 0 0;
         0 0 1 0;
         0 0 0 1] * ...
@@ -81,13 +81,30 @@ for i=1:numSensors
         0 0 0 1];
     %Each transformation matrix is for the global frame. 
     if i>1
-        T{i} = T{i-1}*T{i};
+        transMatrix{i} = transMatrix{i-1}*transMatrix{i};
     end
     %Determines the global coordinates for the origin.
-    globalPos{i}=T{i}(:,4);
+    globalPos{i}=transMatrix{i}(:,4);
     
 end
+end
 
+function F = nonlinfbg(x,a,b,c)
+%Properties of FBG Sensors
+Lam_a = 1535*10^-9; %Meters
+Lam_b = 1531*10^-9; %Meters
+Lam_c = 1539*10^-9; %Meters
+P_e = 0.22;
 
+%Specfications determined by calibration
+r_a = 356*10^-6;    %Meters
+r_b = 312*10^-6;    %Meters
+r_c = 266*10^-6;    %Meters
+L_ab = 126.2*pi/180; %Radians
+L_bc = 113.6*pi/180; %Radians
 
+%Nonlinear set of equations to be solved.
+F = [(a/(Lam_a*(1-P_e))-x(1)*r_a*sin(x(2))-x(3));
+    (b/(Lam_b*(1-P_e))-x(1)*r_b*sin(x(2)+L_ab)-x(3));
+    (c/(Lam_c*(1-P_e))-x(1)*r_c*sin(x(2)+L_ab+L_bc)-x(3))];
 end

@@ -1,4 +1,4 @@
-function [T,globalPos] = velocitymethod(shiftCell)
+function [transMatrix,globalPos] = velocitymethod(shiftCell)
 %Properties of FBG Sensors
 Lam_a = 1535*10^-9; %Meters
 Lam_b = 1531*10^-9; %Meters
@@ -18,7 +18,6 @@ a=[r_a, 0, 0];
 b=[r_b*cos(L_ab), r_b*sin(L_ab), 0];
 c=[r_c*cos(L_ab+L_bc), r_c*sin(L_ab+L_bc), 0];
 
-pre=eye(4);
 for i=1:length(shiftCell)
     for j=1:3
         e(j) = shiftCell{i}(j)/(Lam(j)*(1-P_e));
@@ -33,11 +32,19 @@ for i=1:length(shiftCell)
         0 0 -w_x 0;
         -w_y w_x 0 1;
         0 0 0 0;];
-    T{i}=pre*expm(xi_hat);
-    pre=T{i};
-    globalPos{i}=T{i}(:,4);
-end
+    
+    transMatrix{i}=expm(xi_hat*i);
+    globalPos{i}=transMatrix{i}(:,4);
+    
+    curvature(i) = sqrt(w_y^2+w_x^2);
+    
+    StrainPlot = 1;
+    figure(StrainPlot)
 
+    hold on
+    set(StrainPlot,'Position',[996   408   672   504])
+    plot(i*ones(j),e,'*')
+end
 
 
 end
