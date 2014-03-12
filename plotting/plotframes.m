@@ -1,9 +1,9 @@
-function simulationplot(transMatrix,globalPos,origin,curvature,orientation)
+function plotframes(transMatrix,globalPos,origin,curvature,orientation)
 %Determines how the figure will look and function. Pushbutton allows for
 %each new step to be determined.
 CoordinateFig = 2;
 figure(CoordinateFig)
-clf
+%clf
 daspect([1, 1, 1])
 hold on
 grid on
@@ -48,16 +48,7 @@ for j = 1:length(transMatrix)
     w = m(3,1:3);
     
     quiver3(x,y,z,u,v,w,0.3)
-    
-    %Plots a line between each coordinate frame's origin.
-    %     t=50;
-    %     q1 = linspace(preP1,p(1),t);
-    %     q2 = linspace(preP2,p(2),t);
-    %     q3 = linspace(preP3,p(3),t);
-    %     preP1 = p(1);
-    %     preP2 = p(2);
-    %     preP3 = p(3);
-    %     plot3(q1,q2,q3)
+
     
     %%
 %     %Plots curve between each coordinate

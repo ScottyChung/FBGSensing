@@ -6,8 +6,8 @@
 function shapeSim(shiftCell)
 %close all
 %Used to create random shift in wavelengths based on an average shift.
-addpath('curvemethod','velocitymethod')
-avgShift = 1.0*10^-10;
+addpath('curvemethod','velocitymethod','plotting')
+avgShift = 1.5*10^-9;
 randMatrix = rand(3,4);
 
 if nargin==0
@@ -16,11 +16,12 @@ shiftCell = wavelengthShift(randMatrix,avgShift);
 end
 
 [transMatrix,globalPos] = velocitymethod(shiftCell);
-
-%[transMatrix,globalPos]=curvemethod(shiftCell,'PlotOn');
-
-
 simulationplot(transMatrix,globalPos,'gCoordinates')
+
+[transMatrix,globalPos,curvature, orientation]=curvemethod(shiftCell,'PlotOn');
+simulationplot(transMatrix,globalPos,'gCoordinates',curvature, orientation)
+
+
 
 %figure(3)
 end

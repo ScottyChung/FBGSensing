@@ -1,4 +1,4 @@
-function [transMatrix,globalPos]=curvemethod(shiftCell,vargin)
+function [transMatrix,globalPos,curvature, orientation]=curvemethod(shiftCell,vargin)
 %Calls the nonLinSolve function for each wavelength shift. Requires the
 %input of the random shift cell array and the optional plotting of the
 %curvature. Returns the curvature, orientaion, and bias of each sensor.
